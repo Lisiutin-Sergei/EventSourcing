@@ -91,7 +91,7 @@ namespace EventSourcing.Data.EventStore
 
 			if (!_events.TryGetValue(aggregateId, out eventDescriptors))
 			{
-				throw new Exception($"Не найден объект с идентификатором {aggregateId}");
+				throw new Exception($"Не найден объект с идентификатором {aggregateId}.");
 			}
 
 			return eventDescriptors.Select(desc => desc.EventData).ToList();

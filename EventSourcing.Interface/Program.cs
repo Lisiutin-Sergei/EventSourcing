@@ -1,9 +1,11 @@
-﻿using EventSourcing.Core.ServiceBus;
-using EventSourcing.Data.EventStore;
-using EventSourcing.Data.Repository;
-using EventSourcing.Data.ServiceBus;
-using EventSourcing.Domain.User;
+﻿using EventSourcing.Configurator;
+using EventSourcing.Core.ServiceBus;
+using EventSourcing.Domain;
 using EventSourcing.Domain.User.Commands;
+using EventSourcing.ReadContext;
+using Ninject;
+using System;
+using System.Linq;
 
 namespace EventSourcing.Interface
 {
@@ -11,19 +13,43 @@ namespace EventSourcing.Interface
 	{
 		static void Main(string[] args)
 		{
+			var kernel = new StandardKernel();
+			IoC.RegisterServices(kernel);
+			RegisterBusMessages();
+
+			var serviceBus = IoC.Kernel.Get<IServiceBus>();
+			var readContext = IoC.Kernel.Get<IStorageContext>();
+
 			var cmd = new User_CreateCommand(1, "Sergei", "Pass");
-			var serviceBus = RegisterBus();
 			serviceBus.Send(cmd);
+			Console.WriteLine(cmd.ToString());
+			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}"));
+
+			var userToRename = readContext.Users.FirstOrDefault();
+			var renameCmd = new User_RenameCommand(userToRename.Id, "Sergey", userToRename.Version);
+			serviceBus.Send(renameCmd);
+			Console.WriteLine(renameCmd.ToString());
+			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}"));
+
+			var changePasswordCmd = new User_ChangePasswordCommand(userToRename.Id, "Pass", "Password", userToRename.Version);
+			serviceBus.Send(changePasswordCmd);
+			Console.WriteLine(changePasswordCmd.ToString());
+			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}"));
 		}
 
-		public static IServiceBus RegisterBus()
+		/// <summary>
+		/// Зарегистрировать обработчики команд/событий в сервисной шине. Здесь должно быть дофига DI.
+		/// </summary>
+		/// <returns>Шина + read хранилище.</returns>
+		public static void RegisterBusMessages()
 		{
-			var bus = new ServiceBus();
-			var storage = new EventStore(bus);
-			var rep = new Repository<UserAggregateRoot>(storage);
-			var commands = new UserCommandHandler(rep);
-			bus.RegisterHandler<User_CreateCommand>(commands.Handle);
-			return bus;
+			// Зарегать обработчики команд
+			var domainRegistrator = IoC.Kernel.Get<DomainRegistrator>();
+			domainRegistrator.Register();
+
+			// Зарегать обработчики событий read модели
+			var readContextRegistrator = IoC.Kernel.Get<ReadContextRegistrator>();
+			readContextRegistrator.Register();
 		}
 	}
 }

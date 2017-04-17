@@ -10,26 +10,24 @@ namespace EventSourcing.Core.Domain
 		/// <summary>
 		/// Идентификатор сущности.
 		/// </summary>
-		public int Id => _state?.Id ?? -1;
+		public int Id => State?.Id ?? -1;
 
 		/// <summary>
 		/// Список изменений.
 		/// </summary>
-		private readonly List<IEvent> _changes = new List<IEvent>();
-		public List<IEvent> Changes => _changes;
+		public List<IEvent> Changes { get; private set; } = new List<IEvent>();
 
 		/// <summary>
 		/// Состояние сущности.
 		/// </summary>
-		private readonly T _state = new T();
-		public T State => _state;
+		public T State { get; private set; } = new T();
 
 		/// <summary>
 		/// Пометить изменения как выполненные - очистить список изменений.
 		/// </summary>
 		public void MarkChangesAsCommitted()
 		{
-			_changes.Clear();
+			Changes.Clear();
 		}
 
 		/// <summary>
@@ -54,7 +52,7 @@ namespace EventSourcing.Core.Domain
 			State.Mutate(@event);
 			if (needSetChanges)
 			{
-				_changes.Add(@event);
+				Changes.Add(@event);
 			}
 		}
 	}

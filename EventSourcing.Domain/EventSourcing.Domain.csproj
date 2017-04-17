@@ -40,10 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainRegistrator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\Commands\UserCommandHandler.cs" />
+    <Compile Include="User\Commands\User_ChangePasswordCommand.cs" />
     <Compile Include="User\Commands\User_CreateCommand.cs" />
+    <Compile Include="User\Commands\User_RenameCommand.cs" />
     <Compile Include="User\Events\User_CreatedEvent.cs" />
+    <Compile Include="User\Events\User_PasswordChangedEvent.cs" />
+    <Compile Include="User\Events\User_RenamedEvent.cs" />
     <Compile Include="User\UserAggregateRoot.cs" />
     <Compile Include="User\UserState.cs" />
   </ItemGroup>

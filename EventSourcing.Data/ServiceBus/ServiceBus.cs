@@ -45,12 +45,15 @@ namespace EventSourcing.Data.ServiceBus
 
 			if (_handlers.TryGetValue(typeof(T), out handlers))
 			{
-				if (handlers.Count != 1) throw new InvalidOperationException("cannot send to more than one handler");
+				if (handlers.Count != 1)
+				{
+					throw new InvalidOperationException("Нельзя вызвать более 1 обработчика команды.");
+				}
 				handlers[0](command);
 			}
 			else
 			{
-				throw new InvalidOperationException("no handler registered");
+				throw new InvalidOperationException("Не зарегистрировано ни одного обработчика команды.");
 			}
 		}
 
@@ -63,13 +66,14 @@ namespace EventSourcing.Data.ServiceBus
 		{
 			List<Action<IMessage>> handlers;
 
-			if (!_handlers.TryGetValue(@event.GetType(), out handlers)) return;
+			if (!_handlers.TryGetValue(@event.GetType(), out handlers))
+			{
+				return;
+			}
 
 			foreach (var handler in handlers)
 			{
-				//dispatch on thread pool for added awesomeness
-				var handler1 = handler;
-				ThreadPool.QueueUserWorkItem(x => handler1(@event));
+				handler(@event);
 			}
 		}
 	}

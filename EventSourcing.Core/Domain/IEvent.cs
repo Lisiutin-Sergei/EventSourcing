@@ -3,8 +3,8 @@
 	/// <summary>
 	/// Событие.
 	/// </summary>
-	public interface IEvent : IMessage
+	public abstract class IEvent : IMessage
 	{
-		int Version { get; set; }
+		public int Version { get; set; }
 	}
 }
