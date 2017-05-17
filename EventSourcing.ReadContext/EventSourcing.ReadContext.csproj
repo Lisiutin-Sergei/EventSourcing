@@ -45,6 +45,9 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadContextRegistrator.cs" />
+    <Compile Include="ReadModel\Implementation\UserReadContext.cs" />
+    <Compile Include="ReadModel\Interface\IUserReadContext.cs" />
+    <Compile Include="ReadModel\Model\UserProjection.cs" />
     <Compile Include="StorageContext.cs" />
   </ItemGroup>
   <ItemGroup />

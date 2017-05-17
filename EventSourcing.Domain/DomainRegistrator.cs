@@ -1,5 +1,6 @@
 ﻿using EventSourcing.Core.Repository;
 using EventSourcing.Core.ServiceBus;
+using EventSourcing.Core.Utils;
 using EventSourcing.Domain.User;
 using EventSourcing.Domain.User.Commands;
 
@@ -22,6 +23,9 @@ namespace EventSourcing.Domain
 
 		public DomainRegistrator(IServiceBus serviceBus, IRepository<UserAggregateRoot> userAggregateRepository)
 		{
+			Argument.NotNull(serviceBus, "Не задана сервисная шина.");
+			Argument.NotNull(userAggregateRepository, "Не задан репозиторий событий для сущности Пользователь.");
+
 			_serviceBus = serviceBus;
 			_userAggregateRepository = userAggregateRepository;
 		}
@@ -29,14 +33,13 @@ namespace EventSourcing.Domain
 		/// <summary>
 		/// Зарегать обработчики команд.
 		/// </summary>
-		/// <param name="serviceBus">Сервисная шина.</param>
 		public void Register()
 		{
 			// Зарегать обработчики команд для сущности Пользователь
 			var userCommands = new UserCommandHandler(_userAggregateRepository);
-			_serviceBus.RegisterHandler<User_CreateCommand>(userCommands.Handle);
-			_serviceBus.RegisterHandler<User_RenameCommand>(userCommands.Handle);
-			_serviceBus.RegisterHandler<User_ChangePasswordCommand>(userCommands.Handle);
+			_serviceBus.RegisterHandler<UserCreateCommand>(userCommands.Handle);
+			_serviceBus.RegisterHandler<UserRenameCommand>(userCommands.Handle);
+			_serviceBus.RegisterHandler<UserChangePasswordCommand>(userCommands.Handle);
 		}
 	}
 }

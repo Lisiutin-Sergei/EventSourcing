@@ -5,7 +5,7 @@ namespace EventSourcing.Domain.User.Events
 	/// <summary>
 	/// Событие изменения пароля.
 	/// </summary>
-	public class User_PasswordChangedEvent : IEvent
+	public class UserPasswordChangedEvent : IEvent
 	{
 		/// <summary>
 		/// Идентификатор пользователя.
@@ -22,7 +22,7 @@ namespace EventSourcing.Domain.User.Events
 		/// </summary>
 		public string NewPassword { get; set; }
 
-		public User_PasswordChangedEvent(int userId, string oldPassword, string newPassword)
+		public UserPasswordChangedEvent(int userId, string oldPassword, string newPassword)
 		{
 			UserId = userId;
 			OldPassword = oldPassword;

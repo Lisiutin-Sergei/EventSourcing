@@ -43,12 +43,12 @@
     <Compile Include="DomainRegistrator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User\Commands\UserCommandHandler.cs" />
-    <Compile Include="User\Commands\User_ChangePasswordCommand.cs" />
-    <Compile Include="User\Commands\User_CreateCommand.cs" />
-    <Compile Include="User\Commands\User_RenameCommand.cs" />
-    <Compile Include="User\Events\User_CreatedEvent.cs" />
-    <Compile Include="User\Events\User_PasswordChangedEvent.cs" />
-    <Compile Include="User\Events\User_RenamedEvent.cs" />
+    <Compile Include="User\Commands\UserChangePasswordCommand.cs" />
+    <Compile Include="User\Commands\UserCreateCommand.cs" />
+    <Compile Include="User\Commands\UserRenameCommand.cs" />
+    <Compile Include="User\Events\UserCreatedEvent.cs" />
+    <Compile Include="User\Events\UserPasswordChangedEvent.cs" />
+    <Compile Include="User\Events\UserRenamedEvent.cs" />
     <Compile Include="User\UserAggregateRoot.cs" />
     <Compile Include="User\UserState.cs" />
   </ItemGroup>

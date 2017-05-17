@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using EventSourcing.Core.Utils;
+using System.Collections.Generic;
 
 namespace EventSourcing.Core.Domain
 {
 	/// <summary>
 	/// Корень аггрегата сущности.
 	/// </summary>
-	public abstract class AggregateRoot<T> : IAggregateRoot where T : State, new()
+	public abstract class AggregateRoot<TState> : IAggregateRoot where TState : State, new()
 	{
 		/// <summary>
 		/// Идентификатор сущности.
@@ -20,14 +21,14 @@ namespace EventSourcing.Core.Domain
 		/// <summary>
 		/// Состояние сущности.
 		/// </summary>
-		public T State { get; private set; } = new T();
+		public TState State { get; private set; } = new TState();
 
 		/// <summary>
 		/// Пометить изменения как выполненные - очистить список изменений.
 		/// </summary>
 		public void MarkChangesAsCommitted()
 		{
-			Changes.Clear();
+			Changes?.Clear();
 		}
 
 		/// <summary>
@@ -36,6 +37,8 @@ namespace EventSourcing.Core.Domain
 		/// <param name="history">Список событий.</param>
 		public void LoadsFromHistory(List<IEvent> history)
 		{
+			Argument.NotNull(history, "Не задан список событий.");
+
 			foreach (var e in history)
 			{
 				ApplyChange(e, false);
@@ -49,6 +52,8 @@ namespace EventSourcing.Core.Domain
 		/// <param name="needSetChanges">Нужно ли отображать изменения в списке изменений.</param>
 		public void ApplyChange(IEvent @event, bool needSetChanges = true)
 		{
+			Argument.NotNull(@event, "Не задано событие.");
+
 			State.Mutate(@event);
 			if (needSetChanges)
 			{

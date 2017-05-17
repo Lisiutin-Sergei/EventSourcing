@@ -1,4 +1,5 @@
 ﻿using EventSourcing.Core.MessageHandlers;
+using EventSourcing.Core.Utils;
 using EventSourcing.Domain.User.Events;
 using EventSourcing.ReadContext.Model;
 using System;
@@ -10,9 +11,9 @@ namespace EventSourcing.ReadContext.EventHandlers
 	/// Обработчики событий сущности Пользователь.
 	/// </summary>
 	public class UserEventHandler : 
-		IEventHandler<User_CreatedEvent>,
-		IEventHandler<User_PasswordChangedEvent>,
-		IEventHandler<User_RenamedEvent>
+		IEventHandler<UserCreatedEvent>,
+		IEventHandler<UserPasswordChangedEvent>,
+		IEventHandler<UserRenamedEvent>
 	{
 		/// <summary>
 		/// Контекст данных для read модели.
@@ -21,6 +22,8 @@ namespace EventSourcing.ReadContext.EventHandlers
 
 		public UserEventHandler(IStorageContext storageContext)
 		{
+			Argument.NotNull(storageContext, "Не задан контекст данных для read модели.");
+
 			_storage = storageContext;
 		}
 
@@ -28,8 +31,10 @@ namespace EventSourcing.ReadContext.EventHandlers
 		/// Обработать событие создания пользователя.
 		/// </summary>
 		/// <param name="message">Событие создания пользователя.</param>
-		public void Handle(User_CreatedEvent message)
+		public void Handle(UserCreatedEvent message)
 		{
+			Argument.NotNull(message, "Не задано событие создания пользователя.");
+
 			_storage.Users.Add(new User
 			{
 				Id = message.UserId,
@@ -43,8 +48,10 @@ namespace EventSourcing.ReadContext.EventHandlers
 		/// Обработать событие изменения пароля пользователя.
 		/// </summary>
 		/// <param name="message">Событие изменения пароля пользователя.</param>
-		public void Handle(User_PasswordChangedEvent message)
+		public void Handle(UserPasswordChangedEvent message)
 		{
+			Argument.NotNull(message, "Не задано событие изменения пароля пользователя.");
+
 			var user = _storage.Users.FirstOrDefault(x => x.Id == message.UserId);
 			if (user == null)
 			{
@@ -58,8 +65,10 @@ namespace EventSourcing.ReadContext.EventHandlers
 		/// Обработать событие изменения имени пользователя.
 		/// </summary>
 		/// <param name="message">Событие изменения имени пользователя.</param>
-		public void Handle(User_RenamedEvent message)
+		public void Handle(UserRenamedEvent message)
 		{
+			Argument.NotNull(message, "Не задано событие изменения имени пользователя.");
+
 			var user = _storage.Users.FirstOrDefault(x => x.Id == message.UserId);
 			if (user == null)
 			{

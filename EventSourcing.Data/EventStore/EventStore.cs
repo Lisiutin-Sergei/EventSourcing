@@ -1,5 +1,6 @@
 ﻿using EventSourcing.Core.Domain;
 using EventSourcing.Core.ServiceBus;
+using EventSourcing.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace EventSourcing.Data.EventStore
 
 			public EventDescriptor(int id, IEvent eventData, int version)
 			{
+				Argument.NotNull(eventData, "Не задано событие.");
+
 				EventData = eventData;
 				Version = version;
 				Id = id;
@@ -40,6 +43,7 @@ namespace EventSourcing.Data.EventStore
 		
 		public EventStore(IEventPublisher publisher)
 		{
+			Argument.NotNull(publisher, "Не задан паблишер событий.");
 			_publisher = publisher;
 		}
 
@@ -51,31 +55,30 @@ namespace EventSourcing.Data.EventStore
 		/// <param name="expectedVersion">Ожидаемая версия.</param>
 		public void SaveEvents(int aggregateId, IEnumerable<IEvent> events, int expectedVersion)
 		{
-			List<EventDescriptor> eventDescriptors;
+			Argument.NotNull(events, "Не задан список событий.");
+			Argument.Require(aggregateId >= 0, "Идентификатор сущности должен быть неотрицательным целым числом.");
+			Argument.Require(expectedVersion >= -1, "Ожидаемая версия должна быть неотрицательным целым числом (или -1).");
 
-			// try to get event descriptors list for given aggregate id. otherwise -> create empty dictionary
+			List<EventDescriptor> eventDescriptors;
+			
 			if (!_events.TryGetValue(aggregateId, out eventDescriptors))
 			{
 				eventDescriptors = new List<EventDescriptor>();
 				_events.Add(aggregateId, eventDescriptors);
 			}
-			// check whether latest event version matches current aggregate version. otherwise -> throw exception
 			else if (eventDescriptors[eventDescriptors.Count - 1].Version != expectedVersion && expectedVersion != -1)
 			{
 				throw new Exception("Concurrency");
 			}
 			var i = expectedVersion;
-
-			// iterate through current aggregate events increasing version with each processed event
+			
 			foreach (var @event in events)
 			{
 				i++;
 				@event.Version = i;
-
-				// push event to the event descriptors list for current aggregate
+				
 				eventDescriptors.Add(new EventDescriptor(aggregateId, @event, i));
-
-				// publish current event to the bus for further processing by subscribers
+				
 				_publisher.Publish(@event);
 			}
 		}
@@ -87,6 +90,8 @@ namespace EventSourcing.Data.EventStore
 		/// <returns>Список событий.</returns>
 		public List<IEvent> GetEventsForAggregate(int aggregateId)
 		{
+			Argument.Require(aggregateId >= 0, "Идентификатор сущности должен быть неотрицательным целым числом.");
+
 			List<EventDescriptor> eventDescriptors;
 
 			if (!_events.TryGetValue(aggregateId, out eventDescriptors))

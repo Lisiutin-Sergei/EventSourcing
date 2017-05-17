@@ -1,5 +1,6 @@
 ﻿using EventSourcing.Core.Domain;
 using EventSourcing.Core.Repository;
+using EventSourcing.Core.Utils;
 using EventSourcing.Data.EventStore;
 
 namespace EventSourcing.Data.Repository
@@ -7,8 +8,9 @@ namespace EventSourcing.Data.Repository
 	/// <summary>
 	/// Репозиторий событий.
 	/// </summary>
-	/// <typeparam name="T">Тип сущности, с которой работаем.</typeparam>
-	public class Repository<T> : IRepository<T> where T : IAggregateRoot, new()
+	/// <typeparam name="TAggregateRoot">Тип сущности, с которой работаем.</typeparam>
+	public class Repository<TAggregateRoot> : IRepository<TAggregateRoot> 
+		where TAggregateRoot : IAggregateRoot, new()
 	{
 		/// <summary>
 		/// Хранилище событий.
@@ -17,6 +19,7 @@ namespace EventSourcing.Data.Repository
 
 		public Repository(IEventStore storage)
 		{
+			Argument.NotNull(storage, "Не задано хранилище событий.");
 			_storage = storage;
 		}
 
@@ -27,6 +30,9 @@ namespace EventSourcing.Data.Repository
 		/// <param name="expectedVersion">Ожидаемая версия.</param>
 		public void Save(IAggregateRoot aggregate, int expectedVersion)
 		{
+			Argument.NotNull(aggregate, "Не задана сущность.");
+			Argument.Require(expectedVersion >= -1, "Ожидаемая версия должна быть неотрицательным целым числом (или -1).");
+
 			_storage.SaveEvents(aggregate.Id, aggregate.Changes, expectedVersion);
 		}
 
@@ -35,9 +41,11 @@ namespace EventSourcing.Data.Repository
 		/// </summary>
 		/// <param name="id">Идентификатор сущности.</param>
 		/// <returns>Сущность.</returns>
-		public T GetById(int id)
+		public TAggregateRoot GetById(int id)
 		{
-			var obj = new T();
+			Argument.Require(id >= 0, "Идентификатор сущности должен быть неотрицательным целым числом.");
+
+			var obj = new TAggregateRoot();
 			var e = _storage.GetEventsForAggregate(id);
 			obj.LoadsFromHistory(e);
 			return obj;

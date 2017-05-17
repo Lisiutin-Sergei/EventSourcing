@@ -1,4 +1,5 @@
 ﻿using EventSourcing.Core.Domain;
+using EventSourcing.Core.Utils;
 using EventSourcing.Domain.User.Events;
 using System;
 
@@ -11,7 +12,7 @@ namespace EventSourcing.Domain.User
 	{
 		public UserAggregateRoot(int userId, string name, string password)
 		{
-			var @event = new User_CreatedEvent(userId, name, password);
+			var @event = new UserCreatedEvent(userId, name, password);
 			ApplyChange(@event);
 		}
 
@@ -24,25 +25,21 @@ namespace EventSourcing.Domain.User
 		/// <param name="oldPassword">Старый пароль.</param>
 		public void ChangePassword(string newPassword, string oldPassword)
 		{
-			if (string.IsNullOrEmpty(newPassword))
-			{
-				throw new ArgumentException("newPassword");
-			}
-			ApplyChange(new User_PasswordChangedEvent(Id, oldPassword, newPassword));
+			Argument.NotNull(newPassword, "Не задан новый пароль.");
+
+			ApplyChange(new UserPasswordChangedEvent(Id, oldPassword, newPassword));
 		}
 
 		/// <summary>
 		/// Изменить имя пользователя.
 		/// </summary>
-		/// <param name="newPassword">Новый пароль.</param>
-		/// <param name="oldPassword">Старый пароль.</param>
+		/// <param name="newPassword">Новое имя пользователя.</param>
+		/// <param name="oldPassword">Старое имя пользователя.</param>
 		public void Rename(string newName)
 		{
-			if (string.IsNullOrEmpty(newName))
-			{
-				throw new ArgumentException("newName");
-			}
-			ApplyChange(new User_RenamedEvent(Id, newName, State.Name));
+			Argument.NotNull(newName, "Не задано новое имя пользователя.");
+
+			ApplyChange(new UserRenamedEvent(Id, newName, State.Name));
 		}
 	}
 }

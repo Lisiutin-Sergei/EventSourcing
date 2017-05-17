@@ -11,8 +11,9 @@ namespace EventSourcing.Core.ServiceBus
 		/// <summary>
 		/// Зарегистрировать обработчики сообщений.
 		/// </summary>
-		/// <typeparam name="T">Тип сообщения.</typeparam>
+		/// <typeparam name="TMessage">Тип сообщения.</typeparam>
 		/// <param name="handler">Сообщение.</param>
-		void RegisterHandler<T>(Action<T> handler) where T : IMessage;
+		void RegisterHandler<TMessage>(Action<TMessage> handler)
+			where TMessage : IMessage;
 	}
 }

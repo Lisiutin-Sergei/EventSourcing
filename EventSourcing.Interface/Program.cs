@@ -3,9 +3,9 @@ using EventSourcing.Core.ServiceBus;
 using EventSourcing.Domain;
 using EventSourcing.Domain.User.Commands;
 using EventSourcing.ReadContext;
+using EventSourcing.ReadContext.ReadModel.Interface;
 using Ninject;
 using System;
-using System.Linq;
 
 namespace EventSourcing.Interface
 {
@@ -19,24 +19,26 @@ namespace EventSourcing.Interface
 			RegisterBusMessages();
 
 			var serviceBus = IoC.Instance.Resolve<IServiceBus>();
-			var readContext = IoC.Instance.Resolve<IStorageContext>();
+			var userReadContext = IoC.Instance.Resolve<IUserReadContext>();
 			var n = Environment.NewLine;
 
-			var cmd = new User_CreateCommand(1, "Sergei", "Pass");
+			var userId = 1;
+			var cmd = new UserCreateCommand(userId, "Sergei", "Pass");
 			serviceBus.Send(cmd);
 			Console.WriteLine(cmd.ToString());
-			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
+			userReadContext.GetAll().ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
 
-			var userToRename = readContext.Users.FirstOrDefault();
-			var renameCmd = new User_RenameCommand(userToRename.Id, "Sergey", userToRename.Version);
+			var userToRename = userReadContext.GetById(userId);
+			var renameCmd = new UserRenameCommand(userToRename.Id, "Sergey", userToRename.Version);
 			serviceBus.Send(renameCmd);
 			Console.WriteLine(renameCmd.ToString());
-			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
+			userReadContext.GetAll().ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
 
-			var changePasswordCmd = new User_ChangePasswordCommand(userToRename.Id, "Pass", "Password", userToRename.Version);
+			var userToChangePassword = userReadContext.GetById(userId);
+			var changePasswordCmd = new UserChangePasswordCommand(userToChangePassword.Id, "Pass", "Password", userToChangePassword.Version);
 			serviceBus.Send(changePasswordCmd);
 			Console.WriteLine(changePasswordCmd.ToString());
-			readContext.Users.ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
+			userReadContext.GetAll().ForEach(u => Console.WriteLine($"{u.Id}\t{u.Name}\t{u.Password}{n}"));
 		}
 
 		/// <summary>

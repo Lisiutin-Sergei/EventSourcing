@@ -1,5 +1,6 @@
 ﻿using EventSourcing.Core.Domain;
 using EventSourcing.Core.MessageHandlers;
+using EventSourcing.Core.Utils;
 using EventSourcing.Domain.User.Events;
 
 namespace EventSourcing.Domain.User
@@ -8,9 +9,9 @@ namespace EventSourcing.Domain.User
 	/// Состояние сущности Пользователь.
 	/// </summary>
 	public class UserState : State,
-		IEventHandler<User_CreatedEvent>,
-		IEventHandler<User_PasswordChangedEvent>,
-		IEventHandler<User_RenamedEvent>
+		IEventHandler<UserCreatedEvent>,
+		IEventHandler<UserPasswordChangedEvent>,
+		IEventHandler<UserRenamedEvent>
 	{
 		/// <summary>
 		/// Имя пользователя.
@@ -26,8 +27,10 @@ namespace EventSourcing.Domain.User
 		/// Обработать событие создания пользователя.
 		/// </summary>
 		/// <param name="event">Событие.</param>
-		public void Handle(User_CreatedEvent @event)
+		public void Handle(UserCreatedEvent @event)
 		{
+			Argument.NotNull(@event, "Не задано событие.");
+
 			Id = @event.UserId;
 			Name = @event.Name;
 			Password = @event.Password;
@@ -37,8 +40,10 @@ namespace EventSourcing.Domain.User
 		/// Обработать событие изменения паролья пользователя.
 		/// </summary>
 		/// <param name="event">Событие.</param>
-		public void Handle(User_PasswordChangedEvent @event)
+		public void Handle(UserPasswordChangedEvent @event)
 		{
+			Argument.NotNull(@event, "Не задано событие.");
+
 			Password = @event.NewPassword;
 		}
 
@@ -46,8 +51,10 @@ namespace EventSourcing.Domain.User
 		/// Обработать событие изменения имени пользователя.
 		/// </summary>
 		/// <param name="event">Событие.</param>
-		public void Handle(User_RenamedEvent @event)
+		public void Handle(UserRenamedEvent @event)
 		{
+			Argument.NotNull(@event, "Не задано событие.");
+
 			Name = @event.NewName;
 		}
 	}

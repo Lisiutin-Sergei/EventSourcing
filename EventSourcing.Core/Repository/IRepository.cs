@@ -5,8 +5,9 @@ namespace EventSourcing.Core.Repository
 	/// <summary>
 	/// Интерфейс репозитория событий.
 	/// </summary>
-	/// <typeparam name="T">Тип сущности, с которой работаем.</typeparam>
-	public interface IRepository<T> where T : IAggregateRoot, new()
+	/// <typeparam name="TAggregateRoot">Тип сущности, с которой работаем.</typeparam>
+	public interface IRepository<TAggregateRoot> 
+		where TAggregateRoot : IAggregateRoot, new()
 	{
 		/// <summary>
 		/// Сохранить изменения сущности.
@@ -20,6 +21,6 @@ namespace EventSourcing.Core.Repository
 		/// </summary>
 		/// <param name="id">Идентификатор сущности.</param>
 		/// <returns>Сущность.</returns>
-		T GetById(int id);
+		TAggregateRoot GetById(int id);
 	}
 }

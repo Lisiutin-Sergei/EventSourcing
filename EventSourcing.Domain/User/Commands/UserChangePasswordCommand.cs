@@ -5,7 +5,7 @@ namespace EventSourcing.Domain.User.Commands
 	/// <summary>
 	/// Команда смены пароля пользователя.
 	/// </summary>
-	public class User_ChangePasswordCommand : ICommand
+	public class UserChangePasswordCommand : ICommand
 	{
 		/// <summary>
 		/// Идентификатор пользователя.
@@ -27,7 +27,7 @@ namespace EventSourcing.Domain.User.Commands
 		/// </summary>
 		public int OriginalVersion { get; set; }
 
-		public User_ChangePasswordCommand(int userId, string oldPassword, string newPassword, int originalVersion)
+		public UserChangePasswordCommand(int userId, string oldPassword, string newPassword, int originalVersion)
 		{
 			UserId = userId;
 			OldPassword = oldPassword;
@@ -41,7 +41,9 @@ namespace EventSourcing.Domain.User.Commands
 		/// <returns>Строка с описанием команды.</returns>
 		public override string ToString()
 		{
-			return $"Команда смены пароля с {OldPassword} на {NewPassword} у пользователя с идентификатором {UserId} успешно выполнена.";
+			return 
+				$"Команда смены пароля с {OldPassword ?? string.Empty} на {NewPassword ?? string.Empty}" +
+				$" у пользователя с идентификатором {UserId} успешно выполнена.";
 		}
 	}
 }

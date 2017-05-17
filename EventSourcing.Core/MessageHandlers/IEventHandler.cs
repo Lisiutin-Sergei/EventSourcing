@@ -5,8 +5,9 @@ namespace EventSourcing.Core.MessageHandlers
 	/// <summary>
 	/// Интерфейс обработчика событий.
 	/// </summary>
-	/// <typeparam name="T">Тип события.</typeparam>
-	public interface IEventHandler<T> : IMessageHandler<T> where T : IEvent
+	/// <typeparam name="TEventHandler">Тип события.</typeparam>
+	public interface IEventHandler<TEventHandler> : IMessageHandler<TEventHandler> 
+		where TEventHandler : IEvent
 	{
 	}
 }

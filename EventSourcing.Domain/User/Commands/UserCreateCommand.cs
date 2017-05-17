@@ -3,9 +3,9 @@
 namespace EventSourcing.Domain.User.Commands
 {
 	/// <summary>
-	/// Команда смены имени пользователя.
+	/// Команда создания пользователя.
 	/// </summary>
-	public class User_RenameCommand : ICommand
+	public class UserCreateCommand : ICommand
 	{
 		/// <summary>
 		/// Идентификатор пользователя.
@@ -18,15 +18,15 @@ namespace EventSourcing.Domain.User.Commands
 		public string Name { get; set; }
 
 		/// <summary>
-		/// Версия сущности.
+		/// Пароль пользователя.
 		/// </summary>
-		public int OriginalVersion { get; set; }
+		public string Password { get; set; }
 
-		public User_RenameCommand(int userId, string name, int originalVersion)
+		public UserCreateCommand(int userId, string name, string password)
 		{
 			UserId = userId;
 			Name = name;
-			OriginalVersion = originalVersion;
+			Password = password;
 		}
 
 		/// <summary>
@@ -35,7 +35,9 @@ namespace EventSourcing.Domain.User.Commands
 		/// <returns>Строка с описанием команды.</returns>
 		public override string ToString()
 		{
-			return $"Команда смены имени пользователя на {Name} с идентификатором {UserId} успешно выполнена.";
+			return 
+				$"Команда создания пользователя {Name ?? string.Empty} с идентификатором {UserId}" +
+				$" и паролем {Password ?? string.Empty} успешно выполнена.";
 		}
 	}
 }

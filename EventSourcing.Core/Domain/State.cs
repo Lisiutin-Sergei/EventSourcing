@@ -1,4 +1,6 @@
-﻿namespace EventSourcing.Core.Domain
+﻿using EventSourcing.Core.Utils;
+
+namespace EventSourcing.Core.Domain
 {
 	/// <summary>
 	/// Базовый класс состояния сущности.
@@ -16,6 +18,8 @@
 		/// <param name="event">Событие.</param>
 		public void Mutate(IEvent @event)
 		{
+			Argument.NotNull(@event, "Не задано событие.");
+
 			((dynamic)this).Handle((dynamic)@event);
 		}
 	}

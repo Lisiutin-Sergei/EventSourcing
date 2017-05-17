@@ -5,8 +5,9 @@ namespace EventSourcing.Core.MessageHandlers
 	/// <summary>
 	/// Интерфейс обработчика команд.
 	/// </summary>
-	/// <typeparam name="T">Тип команды.</typeparam>
-	public interface ICommandHandler<T> : IMessageHandler<T> where T : ICommand
+	/// <typeparam name="TCommandHandler">Тип команды.</typeparam>
+	public interface ICommandHandler<TCommandHandler> : IMessageHandler<TCommandHandler> 
+		where TCommandHandler : ICommand
 	{
 	}
 }

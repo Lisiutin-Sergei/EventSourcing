@@ -10,8 +10,8 @@ namespace EventSourcing.Core.ServiceBus
 		/// <summary>
 		/// Опубликовать событие.
 		/// </summary>
-		/// <typeparam name="T">Тип события.</typeparam>
+		/// <typeparam name="TEvent">Тип события.</typeparam>
 		/// <param name="event">Событие.</param>
-		void Publish<T>(T @event) where T : IEvent;
+		void Publish<TEvent>(TEvent @event) where TEvent : IEvent;
 	}
 }

@@ -10,8 +10,8 @@ namespace EventSourcing.Core.ServiceBus
 		/// <summary>
 		/// Отправить команду.
 		/// </summary>
-		/// <typeparam name="T">Тип команды.</typeparam>
+		/// <typeparam name="TCommand">Тип команды.</typeparam>
 		/// <param name="command">Команда.</param>
-		void Send<T>(T command) where T : ICommand;
+		void Send<TCommand>(TCommand command) where TCommand : ICommand;
 	}
 }

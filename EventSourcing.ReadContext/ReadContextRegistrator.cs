@@ -1,4 +1,5 @@
 ﻿using EventSourcing.Core.ServiceBus;
+using EventSourcing.Core.Utils;
 using EventSourcing.Domain.User.Events;
 using EventSourcing.ReadContext.EventHandlers;
 
@@ -21,6 +22,9 @@ namespace EventSourcing.ReadContext
 
 		public ReadContextRegistrator(IServiceBus serviceBus, IStorageContext storageContext)
 		{
+			Argument.NotNull(serviceBus, "Не задана сервисная шина.");
+			Argument.NotNull(storageContext, "Не задано хранилище данных.");
+
 			_serviceBus = serviceBus;
 			_storageContext = storageContext;
 		}
@@ -32,9 +36,9 @@ namespace EventSourcing.ReadContext
 		{
 			// Зарегать обработчики событий read модели для сущности Пользователь
 			var readUserEventHandler = new UserEventHandler(_storageContext);
-			_serviceBus.RegisterHandler<User_CreatedEvent>(readUserEventHandler.Handle);
-			_serviceBus.RegisterHandler<User_RenamedEvent>(readUserEventHandler.Handle);
-			_serviceBus.RegisterHandler<User_PasswordChangedEvent>(readUserEventHandler.Handle);
+			_serviceBus.RegisterHandler<UserCreatedEvent>(readUserEventHandler.Handle);
+			_serviceBus.RegisterHandler<UserRenamedEvent>(readUserEventHandler.Handle);
+			_serviceBus.RegisterHandler<UserPasswordChangedEvent>(readUserEventHandler.Handle);
 		}
 	}
 }

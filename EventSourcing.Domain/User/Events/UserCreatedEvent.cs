@@ -5,7 +5,7 @@ namespace EventSourcing.Domain.User.Events
 	/// <summary>
 	/// Событие создания пользователя.
 	/// </summary>
-	public class User_CreatedEvent : IEvent
+	public class UserCreatedEvent : IEvent
 	{
 		/// <summary>
 		/// Идентификатор пользователя.
@@ -22,7 +22,7 @@ namespace EventSourcing.Domain.User.Events
 		/// </summary>
 		public string Password { get; set; }
 
-		public User_CreatedEvent(int userId, string name, string password)
+		public UserCreatedEvent(int userId, string name, string password)
 		{
 			UserId = userId;
 			Name = name;

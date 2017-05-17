@@ -1,9 +1,12 @@
 ﻿using EventSourcing.Core.Repository;
 using EventSourcing.Core.ServiceBus;
+using EventSourcing.Core.Utils;
 using EventSourcing.Data.EventStore;
 using EventSourcing.Data.Repository;
 using EventSourcing.Data.ServiceBus;
 using EventSourcing.ReadContext;
+using EventSourcing.ReadContext.ReadModel.Implementation;
+using EventSourcing.ReadContext.ReadModel.Interface;
 using Ninject;
 using Ninject.Parameters;
 
@@ -37,6 +40,7 @@ namespace EventSourcing.Configurator
 		/// <param name="kernel">Ядро ninject.</param>
 		public void Initialize(IKernel kernel)
 		{
+			Argument.NotNull(kernel, "Не задан объект для инициализации контейнера зависимостей.");
 			_kernel = kernel;
 		}
 
@@ -56,6 +60,7 @@ namespace EventSourcing.Configurator
 			_kernel.Bind(typeof(IRepository<>)).To(typeof(Repository<>));
 
 			_kernel.Bind<IEventStore>().To<EventStore>().InSingletonScope();
+			_kernel.Bind<IUserReadContext>().To<UserReadContext>();
 		}
 
 		/// <summary>
@@ -75,8 +80,11 @@ namespace EventSourcing.Configurator
 		/// <param name="name">Название аргумента.</param>
 		/// <param name="value">Значение.</param>
 		/// <returns>Аргумент.</returns>
-		public static NinjectArgument Argument(string name, object value)
+		public static NinjectArgument GetArgument(string name, object value)
 		{
+			Argument.NotNullOrEmpty(name, "Не задано имя аргумента.");
+			Argument.NotNull(value, "Не задано значение аргумента.");
+
 			return new NinjectArgument(name, value);
 		}
 
@@ -88,6 +96,8 @@ namespace EventSourcing.Configurator
 			public NinjectArgument(string name, object value)
 				: base(name, value)
 			{
+				Argument.NotNullOrEmpty(name, "Не задано имя аргумента.");
+				Argument.NotNull(value, "Не задано значение аргумента.");
 			}
 		}
 	}

@@ -5,9 +5,10 @@ namespace EventSourcing.Core.MessageHandlers
 	/// <summary>
 	/// Базовый обработчик сообщений.
 	/// </summary>
-	/// <typeparam name="T">Тип сообщения.</typeparam>
-	public interface IMessageHandler<T> where T : IMessage
+	/// <typeparam name="TMessageHandler">Тип сообщения.</typeparam>
+	public interface IMessageHandler<TMessageHandler> 
+		where TMessageHandler : IMessage
 	{
-		void Handle(T message);
+		void Handle(TMessageHandler message);
 	}
 }
